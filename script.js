@@ -98,18 +98,22 @@ canvas.height = window.innerHeight;
 
 const ball = {
   position: {
-    x: 100,
-    y: 400
+    x: 50,
+    y: canvas.height - 200
   },
   speed: {
     x: 0,
     y: 0
   }, 
-  radius: 20,
-  
+  radius: 20, 
+  inventory: {
+    
+  }
 };
 
+
 let detect = false
+// let detect = ball.position.y
 
 let left = false
 let right = false
@@ -138,7 +142,7 @@ function cycle() {
   // if (down) ball.position.y += 15
   // if (respawn) ball.position.x /= 10
   // if (respawn) ball.position.y /= 10
-  if (jump) ball.position.y -= 300
+  if (jump) ball.position.y -= 30
   if (gravity) ball.position.y += 10
 
   ctx.fillStyle = "Blue";
@@ -148,7 +152,7 @@ function cycle() {
   
   
   if (ball.position.x < 35) {
-    ball.position.x = 35;
+    ball.position.x = 30;
   }
   if (ball.position.x > canvas.width - 35) {
     ball.position.x = canvas.width - 35;
@@ -157,18 +161,15 @@ function cycle() {
     ball.position.y = 40;
   }
 
-  
-  if ((ball.position.y = canvas.height - 100) 
-      || (ball.position.y = canvas.height - 200)) {
-    detect = true
-  } else {
-    detect = false
+  // if ((ball.position.y = canvas.height - 100)) {
+  //   detect = true
+  // } else {
+  //   detect = false
+  // }
+  if (jump == true) {
+    jumpCount ++;
   }
-  
-  if (detect == true) {
-    jumpCount++;
-  }
-  if (jumpCount > 10) {
+  if (jumpCount > 7) {
     jump = false;
     jumpCount = 0;
   }
@@ -185,16 +186,33 @@ function cycle() {
   if (ball.position.y > canvas.height - 130) {
     ball.position.y = canvas.height - 130;
   }
-  
-  // 1st Level Platform
+
+// Spawn Point Wall
   ctx.fillStyle = "Black";
-  ctx.fillRect(200, canvas.height - 200, 300, 10)
+  ctx.fillRect(200, canvas.height - 100, 10, -300)
+
+  if ((ball.position.y >= canvas.height - 400
+      && ball.position.y <= canvas.height - 100)
+      && (ball.position.x > 180
+      && ball.position.x < 200)) {
+    ball.position.x = 175;
+  }
+  if ((ball.position.y >= canvas.height - 400
+      && ball.position.y <= canvas.height - 100)
+      && (ball.position.x > 210
+      && ball.position.x < 230)) {
+    ball.position.x = 235;
+  }
+  
+  // 1st Level Platforms
+  ctx.fillStyle = "Black";
+  ctx.fillRect(150, canvas.height - 200, 350, 10)
   ctx.fillStyle = "Black";
   ctx.fillRect(canvas.width - 500, canvas.height - 200, 300, 10)
   
   if ((ball.position.y > canvas.height - 230
       && ball.position.y < canvas.height - 210) 
-      && ((ball.position.x >= 200 
+      && ((ball.position.x >= 150 
       && ball.position.x <= 500)
       || (ball.position.x >= canvas.width - 500 
       && ball.position.x <= canvas.width - 200))) {
@@ -202,27 +220,33 @@ function cycle() {
   }
   if ((ball.position.y < canvas.height - 160
       && ball.position.y > canvas.height - 190) 
-      && ((ball.position.x >= 200 
+      && ((ball.position.x >= 150 
       && ball.position.x <= 500)
       || (ball.position.x >= canvas.width - 500 
       && ball.position.x <= canvas.width - 200))) {
     ball.position.y = canvas.height - 160;
   }
 
-  // 2nd Level Platform
+  // 2nd Level Platforms
   ctx.fillStyle = "Black";
   ctx.fillRect(400, canvas.height - 300, canvas.width - 800, 10)
+  ctx.fillStyle = "Black";
+  ctx.fillRect(0, canvas.height - 300, 50, 10)
 
-  if (ball.position.y > canvas.height - 330 
-      && ball.position.y < canvas.height - 310 
-      && ball.position.x >= 400 
-      && ball.position.x <= canvas.width - 400) {
+  if ((ball.position.y > canvas.height - 330 
+      && ball.position.y < canvas.height - 310) 
+      && ((ball.position.x >= 400 
+      && ball.position.x <= canvas.width - 400)
+      || (ball.position.x >= 0 
+      && ball.position.x <= 50))) {
     ball.position.y = canvas.height - 330;
   } 
-  if (ball.position.y < canvas.height - 260 
-      && ball.position.y > canvas.height - 290 
-      && ball.position.x >= 400 
-      && ball.position.x <= canvas.width - 400) {
+  if ((ball.position.y < canvas.height - 260 
+      && ball.position.y > canvas.height - 290) 
+      && ((ball.position.x >= 400 
+      && ball.position.x <= canvas.width - 400)
+      || (ball.position.x >= 0
+      && ball.position.x <= 50))) {
     ball.position.y = canvas.height - 260;
   } 
 
@@ -268,15 +292,15 @@ function cycle() {
 
   // Top Left Wall
   ctx.fillStyle = "Black";
-  ctx.fillRect(400, canvas.height - 650, 10, 150)
+  ctx.fillRect(400, canvas.height - 500, 10, -canvas.height)
 
-  if ((ball.position.y >= canvas.height - 650
+  if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x > 380
       && ball.position.x < 400)) {
     ball.position.x = 375;
   }
-  if ((ball.position.y >= canvas.height - 650
+  if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x > 410
       && ball.position.x < 430)) {
@@ -285,21 +309,40 @@ function cycle() {
 
   // Top Right Wall
   ctx.fillStyle = "Black";
-  ctx.fillRect(canvas.width - 400, canvas.height - 650, -10, 150)
+  ctx.fillRect(canvas.width - 400, canvas.height - 500, -10, -canvas.height)
 
-  if ((ball.position.y >= canvas.height - 650
+  if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x < canvas.width - 380
       && ball.position.x > canvas.width - 400)) {
     ball.position.x = canvas.width - 375;
   }
-  if ((ball.position.y >= canvas.height - 650
+  if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x < canvas.width - 410
       && ball.position.x > canvas.width - 430)) {
     ball.position.x = canvas.width - 435;
   }
 
+  // Laser
+  ctx.fillStyle = "Red";
+  ctx.fillRect(canvas.width - 650, canvas.height - 290, -5, 190)
+
+  if ((ball.position.y >= canvas.height - 300
+      && ball.position.y <= canvas.height - 100)
+      && (ball.position.x < canvas.width - 630
+      && ball.position.x > canvas.width - 650)) {
+    ball.position.x = 100
+    ball.position.y = canvas.height - 150;
+  }
+  if ((ball.position.y >= canvas.height - 300
+      && ball.position.y <= canvas.height - 100)
+      && (ball.position.x < canvas.width - 655
+      && ball.position.x > canvas.width - 675)) {
+    ball.position.x = 100
+    ball.position.y = canvas.height - 150;
+  }
+  
   requestAnimationFrame(cycle);
 }
 requestAnimationFrame(cycle);
@@ -410,21 +453,27 @@ window.addEventListener("keydown", function(event) {
   }
 });
 
-// if (detect == true) {
-  window.addEventListener("keypress", function(event) {
-  switch (event.code) {
-    case "Space":
-      jump = true
-      break;
-    case "KeyW":
-      jump = true
-      break;
-    // case "ArrowUp":
-    //   jump = true
-    //   break;
-  }
+window.addEventListener("keypress", function(event) {
+  // if (detect == true) {
+    switch (event.code) {
+      case "Space":
+        jump = true
+        break;
+      case "KeyW":
+        jump = true
+        break;
+  } if (detect == false) {
+    switch (event.code) {
+      case "Space":
+        jump = true
+        break;
+      case "KeyW":
+        jump = true
+        break;
+      }
+    }
+  // } 
 });
-// };
 
 window.addEventListener("keypress", function(event) {
   switch (event.code) {
