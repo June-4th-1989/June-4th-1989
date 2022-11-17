@@ -98,7 +98,7 @@ canvas.height = window.innerHeight;
 
 const ball = {
   position: {
-    x: 50,
+    x: 150,
     y: canvas.height - 200
   },
   speed: {
@@ -127,6 +127,7 @@ let interact = false
 let count = 0
 let gravity = 0
 let jumpCount = 0
+let laserCount = 0
 
 
 // Ball Function
@@ -136,8 +137,8 @@ function cycle() {
   count += 10
   gravity += 10
 
-  if (right) ball.position.x += 15
-  if (left) ball.position.x -= 15
+  if (right) ball.position.x += 10
+  if (left) ball.position.x -= 10
   // if (up) ball.position.y -= 15
   // if (down) ball.position.y += 15
   // if (respawn) ball.position.x /= 10
@@ -151,11 +152,13 @@ function cycle() {
   ctx.fill();
   
   
-  if (ball.position.x < 35) {
-    ball.position.x = 30;
+  if (ball.position.x > 0
+     && ball.position.x < 20) {
+    ball.position.x = 20;
   }
-  if (ball.position.x > canvas.width - 35) {
-    ball.position.x = canvas.width - 35;
+  if (ball.position.x < canvas.width - 0
+     && ball.position.x > canvas.width - 20) {
+    ball.position.x = canvas.width - 20;
   }
   if (ball.position.y < 40) {
     ball.position.y = 40;
@@ -169,7 +172,7 @@ function cycle() {
   if (jump == true) {
     jumpCount ++;
   }
-  if (jumpCount > 7) {
+  if (jumpCount > 6) {
     jump = false;
     jumpCount = 0;
   }
@@ -189,68 +192,88 @@ function cycle() {
 
 // Spawn Point Wall
   ctx.fillStyle = "Black";
-  ctx.fillRect(200, canvas.height - 100, 10, -300)
-
-  if ((ball.position.y >= canvas.height - 400
+  ctx.fillRect(200, canvas.height - 100, 10, -360)
+  ctx.fillStyle = "Gray";
+  ctx.fillRect(200, canvas.height - 460, 10, -6)
+  ctx.fillRect(201, canvas.height - 466, 8, -1)
+  ctx.fillRect(202, canvas.height - 467, 6, -1)
+  ctx.fillRect(203, canvas.height - 468, 4, -1)
+  ctx.fillRect(204, canvas.height - 469, 2, -1)
+  
+  if ((ball.position.y >= canvas.height - 466
       && ball.position.y <= canvas.height - 100)
       && (ball.position.x > 180
       && ball.position.x < 200)) {
-    ball.position.x = 175;
+    ball.position.x = 180;
   }
-  if ((ball.position.y >= canvas.height - 400
+  if ((ball.position.y >= canvas.height - 466
       && ball.position.y <= canvas.height - 100)
       && (ball.position.x > 210
       && ball.position.x < 230)) {
-    ball.position.x = 235;
+    ball.position.x = 230;
+  }
+  if ((ball.position.y > canvas.height - 486 
+      && ball.position.y > canvas.height - 466)
+      && ball.position.x >= 200
+      && ball.position.x <= 206) {
+    ball.position.x = 100
   }
   
   // 1st Level Platforms
   ctx.fillStyle = "Black";
-  ctx.fillRect(150, canvas.height - 200, 350, 10)
+  ctx.fillRect(0, canvas.height - 200, 70, 10)
+  ctx.fillStyle = "Black";
+  ctx.fillRect(200, canvas.height - 200, 250, 10)
   ctx.fillStyle = "Black";
   ctx.fillRect(canvas.width - 500, canvas.height - 200, 300, 10)
   
   if ((ball.position.y > canvas.height - 230
       && ball.position.y < canvas.height - 210) 
-      && ((ball.position.x >= 150 
-      && ball.position.x <= 500)
-      || (ball.position.x >= canvas.width - 500 
+      && ((ball.position.x >= 0
+      && ball.position.x <= 70)
+      || (ball.position.x >= 200
+      && ball.position.x <= 450)
+      || (ball.position.x >= canvas.width - 450 
       && ball.position.x <= canvas.width - 200))) {
     ball.position.y = canvas.height - 230;
   }
   if ((ball.position.y < canvas.height - 160
       && ball.position.y > canvas.height - 190) 
-      && ((ball.position.x >= 150 
-      && ball.position.x <= 500)
-      || (ball.position.x >= canvas.width - 500 
+      && ((ball.position.x >= 0
+      && ball.position.x <= 70)
+      || (ball.position.x >= 200
+      && ball.position.x <= 450)
+      || (ball.position.x >= canvas.width - 450 
       && ball.position.x <= canvas.width - 200))) {
     ball.position.y = canvas.height - 160;
   }
 
   // 2nd Level Platforms
   ctx.fillStyle = "Black";
-  ctx.fillRect(400, canvas.height - 300, canvas.width - 800, 10)
+  ctx.fillRect(130, canvas.height - 300, 70, 10)
   ctx.fillStyle = "Black";
-  ctx.fillRect(0, canvas.height - 300, 50, 10)
+  ctx.fillRect(400, canvas.height - 300, canvas.width - 800, 10)
 
   if ((ball.position.y > canvas.height - 330 
       && ball.position.y < canvas.height - 310) 
-      && ((ball.position.x >= 400 
-      && ball.position.x <= canvas.width - 400)
-      || (ball.position.x >= 0 
-      && ball.position.x <= 50))) {
+      && ((ball.position.x >= 130
+      && ball.position.x <= 200)
+      || (ball.position.x >= 400 
+      && ball.position.x <= canvas.width - 400))) {
     ball.position.y = canvas.height - 330;
   } 
   if ((ball.position.y < canvas.height - 260 
       && ball.position.y > canvas.height - 290) 
-      && ((ball.position.x >= 400 
-      && ball.position.x <= canvas.width - 400)
-      || (ball.position.x >= 0
-      && ball.position.x <= 50))) {
+      && ((ball.position.x >= 130
+      && ball.position.x <= 200)
+      || (ball.position.x >= 400 
+      && ball.position.x <= canvas.width - 400))) {
     ball.position.y = canvas.height - 260;
   } 
 
   // 3rd Level Platforms
+  ctx.fillStyle = "Black";
+  ctx.fillRect(0, canvas.height - 400, 70, 10)
   ctx.fillStyle = "Black";
   ctx.fillRect(200, canvas.height - 400, 300, 10)
   ctx.fillStyle = "Black";
@@ -258,7 +281,9 @@ function cycle() {
   
   if ((ball.position.y > canvas.height - 430
       && ball.position.y < canvas.height - 410) 
-      && ((ball.position.x >= 200 
+      && ((ball.position.x >= 0
+      && ball.position.x <= 70)
+      || (ball.position.x >= 195
       && ball.position.x <= 500)
       || (ball.position.x >= canvas.width - 500 
       && ball.position.x <= canvas.width - 200))) {
@@ -266,7 +291,9 @@ function cycle() {
   }
   if ((ball.position.y < canvas.height - 360
       && ball.position.y > canvas.height - 390) 
-      && ((ball.position.x >= 200 
+      && ((ball.position.x >= 0
+      && ball.position.x <= 70)
+      || (ball.position.x >= 190
       && ball.position.x <= 500)
       || (ball.position.x >= canvas.width - 500 
       && ball.position.x <= canvas.width - 200))) {
@@ -298,13 +325,13 @@ function cycle() {
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x > 380
       && ball.position.x < 400)) {
-    ball.position.x = 375;
+    ball.position.x = 380;
   }
   if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x > 410
       && ball.position.x < 430)) {
-    ball.position.x = 435;
+    ball.position.x = 430;
   }
 
   // Top Right Wall
@@ -315,32 +342,83 @@ function cycle() {
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x < canvas.width - 380
       && ball.position.x > canvas.width - 400)) {
-    ball.position.x = canvas.width - 375;
+    ball.position.x = canvas.width - 380;
   }
   if ((ball.position.y >= -canvas.height
       && ball.position.y <= canvas.height - 490)
       && (ball.position.x < canvas.width - 410
       && ball.position.x > canvas.width - 430)) {
-    ball.position.x = canvas.width - 435;
+    ball.position.x = canvas.width - 430;
+  }
+
+  // Middle Wall
+  ctx.fillStyle = "Black";
+  ctx.fillRect(680, canvas.height - 500, 10, 200)
+
+  if ((ball.position.y >= canvas.height - 500
+      && ball.position.y <= canvas.height - 300)
+      && (ball.position.x > 660
+      && ball.position.x < 680)) {
+    ball.position.x = 660;
+  }
+  if ((ball.position.y >= canvas.height - 500
+      && ball.position.y <= canvas.height - 300)
+      && (ball.position.x > 690
+      && ball.position.x < 710)) {
+    ball.position.x = 710;
   }
 
   // Laser
+  ctx.fillStyle = "Grey";
+  ctx.fillRect(580, canvas.height - 290, 10, 10)
+  ctx.fillRect(580, canvas.height - 100, 10, -10)
+  ctx.fillRect(680, canvas.height - 290, 10, 10)
+  ctx.fillRect(680, canvas.height - 100, 10, -10)
+  ctx.fillRect(780, canvas.height - 290, 10, 10)
+  ctx.fillRect(780, canvas.height - 100, 10, -10)
+  
+  laserCount ++;
+  if (laserCount < 20) {
+  
   ctx.fillStyle = "Red";
-  ctx.fillRect(canvas.width - 650, canvas.height - 290, -5, 190)
+  ctx.fillRect(582, canvas.height - 290, 6, 190)
+  ctx.fillStyle = "Red";
+  ctx.fillRect(682, canvas.height - 290, 6, 190)
+  ctx.fillStyle = "Red";
+  ctx.fillRect(782, canvas.height - 290, 6, 190)
+  ctx.fillStyle = "Grey";
+  ctx.fillRect(580, canvas.height - 290, 10, 10)
+  ctx.fillRect(580, canvas.height - 100, 10, -10)
+  ctx.fillRect(680, canvas.height - 290, 10, 10)
+  ctx.fillRect(680, canvas.height - 100, 10, -10)
+  ctx.fillRect(780, canvas.height - 290, 10, 10)
+  ctx.fillRect(780, canvas.height - 100, 10, -10)
 
   if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
-      && (ball.position.x < canvas.width - 630
-      && ball.position.x > canvas.width - 650)) {
+      && (ball.position.x > 565
+      && ball.position.x < 605)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
-  }
+    }
   if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
-      && (ball.position.x < canvas.width - 655
-      && ball.position.x > canvas.width - 675)) {
+      && (ball.position.x > 665
+      && ball.position.x < 705)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    }
+  if ((ball.position.y >= canvas.height - 300
+      && ball.position.y <= canvas.height - 100)
+      && (ball.position.x > 765
+      && ball.position.x < 805)) {
+    ball.position.x = 100
+    ball.position.y = canvas.height - 150;
+    }
+  
+  } 
+  if (laserCount > 40) {
+    laserCount = 0;
   }
   
   requestAnimationFrame(cycle);
