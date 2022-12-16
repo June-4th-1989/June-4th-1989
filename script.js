@@ -8,6 +8,15 @@ canvas.height = window.innerHeight;
 // console.log(canvas.width);
 // console.log(canvas.height);
 
+// Canvas Rescaling
+if (window.innerWidth <= 1300) {
+  canvas.height = (9 * canvas.width / 16);
+}
+if (window.innerWidth >= 1350) {
+  canvas.width = 1350;
+  canvas.height = (9 * 1350 / 16);
+}
+
 // function resizeCanvas() {
 //   canvas.style.width = window.innerWidth + "px";
 //   canvas.style.height = window.innerHeight + "px";
@@ -24,7 +33,6 @@ canvas.height = window.innerHeight;
 
 
 // ___________________ Actual Game Code ____________________
-
 
 
 // ------------------------ Objects ------------------------
@@ -72,16 +80,16 @@ const movingspike = {
   a: {
     top: canvas.height - 190,
     bottom: canvas.height - 160,
-  }, 
+  },
   b: {
     top: canvas.height - 190,
     bottom: canvas.height - 160,
-  }, 
+  },
   c: {
     top: canvas.height - 290,
     bottom: canvas.height - 260,
   },
-  speed: 4
+  speed: 6
 };
 
 // Doorway
@@ -102,13 +110,13 @@ let left = false
 let right = false
 let up = false
 let down = false
+let gravity = true
 let jump = false
 let detectEnd = false
 let end = false
 
 // Counter Variables
 let count = 0
-let gravity = 0
 let shouldJumpCount = 0
 let jumpCount = 0
 let laserCount = 0
@@ -118,16 +126,71 @@ let spikeCount = 0
 let doorCount = 0
 let deathCount = 0
 
+// Timer
+let msCount = 0
+let secondCount = 0
+let minuteCount = 0
+
+
 // ----------------------- Function ---------------------------
 
 
 function cycle() {
-  
-  //---------------------- General Stuff ------------------------
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  count += 10;
-  gravity += 10;
+  ctx.fillStyle = "SkyBlue";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // ---------------------- Canvas Text --------------------------
+
+  // Keys
+  ctx.strokeStyle = "Black";
+  ctx.beginPath();
+  ctx.moveTo(10, 100);
+  ctx.lineTo(10, 20);
+  ctx.lineTo(380, 20);
+  ctx.lineTo(380, 100);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.font = "Bold 20px Arial";
+  ctx.fillStyle = "Black";
+  ctx.textAlign = "left";
+  ctx.fillText("A / ⇦: Left", 20, 50);
+  ctx.fillText("D / ⇨: Right", 20, 80);
+  ctx.fillText("W / Space: Jump", 200, 50);
+  ctx.fillText("E: Interact", 200, 80);
+
+  // Death Count
+  ctx.strokeStyle = "Black";
+  ctx.beginPath();
+  ctx.moveTo(canvas.width - 10, 70);
+  ctx.lineTo(canvas.width - 10, 20);
+  ctx.lineTo(canvas.width - 350, 20);
+  ctx.lineTo(canvas.width - 350, 70);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.font = "Bold 20px Arial";
+  ctx.fillStyle = "Red";
+  ctx.textAlign = "right";
+  ctx.fillText("Death Count: " + deathCount, canvas.width - 200, 50);
+
+  // Speedrun Timer
+  msCount++;
+  if (msCount > 99) {
+    secondCount += 1;
+    msCount = 0;
+  }
+  if (secondCount > 59) {
+    minuteCount += 1;
+    secondCount = 0;
+  }
+  let timer = minuteCount + ":" + secondCount + "." + msCount
+  ctx.font = "Bold 20px Arial";
+  ctx.fillStyle = "Green";
+  ctx.textAlign = "left";
+  ctx.fillText("Time: " + timer, canvas.width - 160, 50);
+
+  //---------------------- General Stuff ------------------------
 
   // Speed Rates
 
@@ -147,18 +210,18 @@ function cycle() {
   if (cannonCount) cannonball.c.x -= cannonball.speed
   if (cannonCount) cannonball.d.x -= cannonball.speed
   // Moving Spikes Speeds
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.a.top += movingspike.speed
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.a.bottom += movingspike.speed
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.b.top += movingspike.speed
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.b.bottom += movingspike.speed
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.c.top += movingspike.speed
-  if (spikeCount > 15 && spikeCount <= 30) movingspike.c.bottom += movingspike.speed
-  if (spikeCount > 30) movingspike.a.top -= movingspike.speed
-  if (spikeCount > 30) movingspike.a.bottom -= movingspike.speed
-  if (spikeCount > 30) movingspike.b.top -= movingspike.speed
-  if (spikeCount > 30) movingspike.b.bottom -= movingspike.speed
-  if (spikeCount > 30) movingspike.c.top -= movingspike.speed
-  if (spikeCount > 30) movingspike.c.bottom -= movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.a.top += movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.a.bottom += movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.b.top += movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.b.bottom += movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.c.top += movingspike.speed
+  if (spikeCount > 10 && spikeCount <= 20) movingspike.c.bottom += movingspike.speed
+  if (spikeCount > 20) movingspike.a.top -= movingspike.speed
+  if (spikeCount > 20) movingspike.a.bottom -= movingspike.speed
+  if (spikeCount > 20) movingspike.b.top -= movingspike.speed
+  if (spikeCount > 20) movingspike.b.bottom -= movingspike.speed
+  if (spikeCount > 20) movingspike.c.top -= movingspike.speed
+  if (spikeCount > 20) movingspike.c.bottom -= movingspike.speed
 
   // Ball Drawing
   ctx.fillStyle = "Blue";
@@ -484,6 +547,7 @@ function cycle() {
       && ball.position.x <= 210)) {
     ball.position.x = 100;
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
   // Bottom Left Wall
@@ -511,7 +575,7 @@ function cycle() {
       && ball.position.x <= 400)) {
     ball.position.y = canvas.height - 230;
   }
- 
+
   // Lower Right Wall
 
   ctx.fillStyle = "Black";
@@ -566,6 +630,7 @@ function cycle() {
       && ball.position.x <= canvas.width - 200)) {
     ball.position.x = 100;
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
   // Main Middle Wall
@@ -586,7 +651,7 @@ function cycle() {
       && ball.position.x <= canvas.width / 2 + 25)) {
     ball.position.x = canvas.width / 2 + 25;
   }
-  
+
   // Top Left Wall
 
   ctx.fillStyle = "Black";
@@ -619,10 +684,10 @@ function cycle() {
   if ((ball.position.y >= canvas.height - 690
     && ball.position.y <= canvas.height - 610)
     && (ball.position.x <= canvas.width - 410
-       && ball.position.x >= canvas.width - 430)) {
+      && ball.position.x >= canvas.width - 430)) {
     ball.position.x = canvas.width - 430;
   }
-  
+
 
   //----------------------- Lasers -----------------------------
 
@@ -665,7 +730,7 @@ function cycle() {
     ctx.fillStyle = "Grey";
     ctx.fillRect(canvas.width - 200, canvas.height - 400, 10, 10)
     ctx.fillRect(canvas.width - 70, canvas.height - 400, -10, 10)
-    
+
     // Bottom Lasers Killing
     if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
@@ -673,6 +738,7 @@ function cycle() {
         && ball.position.x < canvas.width / 2 - 127)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
     if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
@@ -680,6 +746,7 @@ function cycle() {
         && ball.position.x < canvas.width / 2 - 27)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
     if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
@@ -687,6 +754,7 @@ function cycle() {
         && ball.position.x < canvas.width / 2 + 73)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
     if ((ball.position.y >= canvas.height - 300
       && ball.position.y <= canvas.height - 100)
@@ -694,6 +762,7 @@ function cycle() {
         && ball.position.x < canvas.width / 2 + 173)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
     // Upper Laser Killing
     if ((ball.position.y > canvas.height - 418
@@ -702,6 +771,7 @@ function cycle() {
         && ball.position.x <= canvas.width - 70)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
   }
   // Laser Reset
@@ -711,7 +781,7 @@ function cycle() {
 
 
   //----------------------- Cannons -----------------------------
-  
+
   // Drawing
   ctx.fillStyle = "Black";
   ctx.fillRect(210, canvas.height - 380, 10, 20)
@@ -721,10 +791,10 @@ function cycle() {
   cannonCount++;
 
   // Top Left Cannon
-  
+
   cannonCount++;
   if (cannonCount > 0) {
-  // Drawing
+    // Drawing
     ctx.fillStyle = "Grey";
     ctx.beginPath();
     ctx.arc(cannonball.a.x, cannonball.a.y, cannonball.a.radius, 0, Math.PI * 2);
@@ -744,12 +814,13 @@ function cycle() {
       && ball.position.y < cannonball.a.y + 20)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
   // Bottom Left Cannon
-  
+
   if (cannonCount > 0) {
-  // Drawing
+    // Drawing
     ctx.fillStyle = "Grey";
     ctx.beginPath();
     ctx.arc(cannonball.b.x, cannonball.b.y, cannonball.b.radius, 0, Math.PI * 2);
@@ -769,12 +840,13 @@ function cycle() {
       && ball.position.y < cannonball.b.y + 20)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
   // Top Right Cannon
-  
+
   if (cannonCount > 0) {
-  // Drawing
+    // Drawing
     ctx.fillStyle = "Grey";
     ctx.beginPath();
     ctx.arc(cannonball.c.x, cannonball.c.y, cannonball.c.radius, 0, Math.PI * 2);
@@ -794,12 +866,13 @@ function cycle() {
       && ball.position.y < cannonball.c.y + 20)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
   // Bottom Right Cannon
-  
+
   if (cannonCount > 0) {
-  // Drawing
+    // Drawing
     ctx.fillStyle = "Grey";
     ctx.beginPath();
     ctx.arc(cannonball.d.x, cannonball.d.y, cannonball.d.radius, 0, Math.PI * 2);
@@ -819,6 +892,7 @@ function cycle() {
       && ball.position.y < cannonball.d.y + 20)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
 
@@ -857,21 +931,23 @@ function cycle() {
   // Spike Killing
   if ((ball.position.y >= canvas.height - 140
     && ball.position.y <= canvas.height - 100)
-      && (ball.position.x >= 210
-        && ball.position.x <= 390)) {
+    && (ball.position.x >= 210
+      && ball.position.x <= 390)) {
     ball.position.x = 100
     ball.position.y = canvas.height - 150;
+    deathCount += 1;
   }
 
-  spikeCount ++;
-  if (spikeCount > 45) {
+  // Moving Spike Count
+  spikeCount++;
+  if (spikeCount > 30) {
     spikeCount = 0;
   }
 
   // Left Moving Spikes
 
   // Drawing
-  if (spikeCount <= 45) {
+  if (spikeCount <= 30) {
     ctx.beginPath();
     ctx.moveTo(canvas.width - 300, canvas.height - 190);
     ctx.lineTo(canvas.width - 300, movingspike.a.top);
@@ -894,17 +970,18 @@ function cycle() {
     // Spike Killing
     if ((ball.position.y > movingspike.a.top
       && ball.position.y < movingspike.a.bottom)
-       && (ball.position.x >= canvas.width - 390
-          && ball.position.x <= canvas.width - 290)) {
+      && (ball.position.x >= canvas.width - 390
+        && ball.position.x <= canvas.width - 290)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
   }
 
   // Right Moving Spikes
 
   // Drawing
-  if (spikeCount <= 45) {
+  if (spikeCount <= 30) {
     ctx.beginPath();
     ctx.moveTo(canvas.width - 120, canvas.height - 190);
     ctx.lineTo(canvas.width - 120, movingspike.b.top);
@@ -927,17 +1004,18 @@ function cycle() {
     // Spike Killing
     if ((ball.position.y > movingspike.b.top
       && ball.position.y < movingspike.b.bottom)
-       && (ball.position.x >= canvas.width - 210
-          && ball.position.x <= canvas.width - 110)) {
+      && (ball.position.x >= canvas.width - 210
+        && ball.position.x <= canvas.width - 110)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
   }
 
   // Top Moving Spikes
 
   // Drawing
-  if (spikeCount <= 45) {
+  if (spikeCount <= 30) {
     ctx.beginPath();
     ctx.moveTo(canvas.width - 210, canvas.height - 290);
     ctx.lineTo(canvas.width - 210, movingspike.c.top);
@@ -960,14 +1038,15 @@ function cycle() {
     // Spike Killing
     if ((ball.position.y > movingspike.c.top
       && ball.position.y < movingspike.c.bottom)
-       && (ball.position.x >= canvas.width - 300
-          && ball.position.x <= canvas.width - 200)) {
+      && (ball.position.x >= canvas.width - 300
+        && ball.position.x <= canvas.width - 200)) {
       ball.position.x = 100
       ball.position.y = canvas.height - 150;
+      deathCount += 1;
     }
   }
 
-  
+
   // ----------------------- Doorway and Button -------------------------------
 
   // Doorway
@@ -991,14 +1070,14 @@ function cycle() {
   }
   // Doorway Counter
   if (interact === true) {
-    doorCount ++;
+    doorCount++;
   }
 
   if (doorCount > 360) {
     doorCount = 0;
     interact = false;
   }
-  
+
   // Interact Detection
   if ((ball.position.y >= canvas.height - 390
     && ball.position.y <= canvas.height - 300)
@@ -1008,7 +1087,7 @@ function cycle() {
   } else {
     detect = false;
   }
-    
+
   // Button
 
   // Drawing
@@ -1018,7 +1097,7 @@ function cycle() {
   ctx.fillRect(canvas.width - 5, canvas.height - 320, -40, -40)
   ctx.fillStyle = "Red";
   ctx.beginPath();
-  ctx.arc(canvas.width - 25, canvas.height - 340 , 15, 0, Math.PI * 2);
+  ctx.arc(canvas.width - 25, canvas.height - 340, 15, 0, Math.PI * 2);
   ctx.fill();
 
   // Left
@@ -1034,7 +1113,7 @@ function cycle() {
   // Chest Drawing
   ctx.fillStyle = "Sienna";
   ctx.fillRect(410, canvas.height - 500, 100, -50)
-  ctx.fillStyle = "Grey";
+  ctx.fillStyle = "Gold";
   ctx.fillRect(450, canvas.height - 520, 20, -10)
   ctx.strokeStyle = "Black";
   ctx.beginPath();
@@ -1087,55 +1166,71 @@ function cycle() {
     detectEnd = false;
   }
 
-  // ------------------- End Game ---------------------------
-  
+  // --------------------- End Screen ---------------------------
+
   if (end === true) {
-    
+    ctx.fillStyle = "LightGrey";
+    ctx.fillRect(canvas.width / 2 - 200, canvas.height / 2 - 80, 400, 150);
+    ctx.strokeStyle = "Black";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2 - 200, canvas.height / 2 - 80);
+    ctx.lineTo(canvas.width / 2 + 200, canvas.height / 2 - 80);
+    ctx.lineTo(canvas.width / 2 + 200, canvas.height / 2 + 70);
+    ctx.lineTo(canvas.width / 2 - 200, canvas.height / 2 + 70);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.font = "Bold 20px Arial";
+    ctx.fillStyle = "Black";
+    ctx.textAlign = "center";
+    ctx.fillText("Hello there. Congratulations on beating", canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText("the game and finding the One Piece.", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("The One Piece is [REDACTED].", canvas.width / 2, canvas.height / 2 + 20);
+
     return;
   }
-  
+  // return;
+
   requestAnimationFrame(cycle);
 }
 requestAnimationFrame(cycle);
 
 
+//----------------------- Key Inputs ----------------------------
 
-//--------------------- Key Inputs -------------------------
-
-// Key Holds
+// Key Up and Down
 
 window.addEventListener("keyup", function(event) {
-    switch (event.code) {
-      case "ArrowRight":
-        right = false
-        break;
-      case "ArrowLeft":
-        left = false
-        break;
-      case "KeyD":
-        right = false
-        break;
-      case "KeyA":
-        left = false
-        break;
-    }
+  switch (event.code) {
+    case "ArrowRight":
+      right = false
+      break;
+    case "ArrowLeft":
+      left = false
+      break;
+    case "KeyD":
+      right = false
+      break;
+    case "KeyA":
+      left = false
+      break;
+  }
 });
 
 window.addEventListener("keydown", function(event) {
-    switch (event.code) {
-      case "ArrowLeft":
-        left = true
-        break;
-      case "ArrowRight":
-        right = true
-        break;
-      case "KeyA":
-        left = true
-        break;
-      case "KeyD":
-        right = true
-        break;
-    }
+  switch (event.code) {
+    case "ArrowLeft":
+      left = true
+      break;
+    case "ArrowRight":
+      right = true
+      break;
+    case "KeyA":
+      left = true
+      break;
+    case "KeyD":
+      right = true
+      break;
+  }
 });
 
 // Key Presses
@@ -1151,9 +1246,6 @@ window.addEventListener("keypress", function(event) {
         break;
     }
   }
-});
-
-window.addEventListener("keypress", function(event) {
   if (detect === true) {
     switch (event.code) {
       case "KeyE":
